@@ -1,5 +1,7 @@
 from django.http import HttpResponse, HttpResponseNotFound, HttpRequest
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404
+
+from .models.women import Women
 
 
 menu = [
@@ -9,12 +11,6 @@ menu = [
     {'title': "Войти", 'url_name': 'login'}
 ]
 
-data_db = [
-    {'id': 1, 'title': 'Анджелина Джоли', 'content': 'Биография Анджелины Джоли', 'is_published': True},
-    {'id': 2, 'title': 'Марго Робби', 'content': 'Биография Марго Робби', 'is_published': True},
-    {'id': 3, 'title': 'Джулия Робертс', 'content': 'Биография Джулия Робертс', 'is_published': True},
-]
-
 categories_db = [
     {"id": 1, "name": "Актрисы"},
     {"id": 2, "name": "Певицы"},
@@ -22,10 +18,12 @@ categories_db = [
 ]
 
 def index(request: HttpRequest):
+    posts = Women.objects.filter(is_published=1)
+
     data = {
         'title': 'Главная страница',
         'menu': menu,
-        'posts': data_db,
+        'posts': posts,
         'selected': 0
     }
     return render(request, 'index.html', context=data)
@@ -35,8 +33,17 @@ def about(request: HttpRequest):
     return render(request, 'about.html', {'title': 'О сайте', 'menu': menu})
 
 
-def show_post(request: HttpRequest, post_id: int):
-    return HttpResponse(f"Отображение статьи с id = {post_id}")
+def show_post(request: HttpRequest, post_slug: str):
+    post = get_object_or_404(Women, slug=post_slug)
+
+    data = {
+        "title": post.title,
+        "menu": menu,
+        "post": post,
+        "selected": 1
+    }
+
+    return render(request, "post.html", data)
 
 
 def addpage(request: HttpRequest):

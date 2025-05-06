@@ -1,15 +1,16 @@
 from django import template
-import store.views as views
+from store.models import Categories
 
 
 register = template.Library()
 
+CATS = Categories.objects.all()
 
 @register.simple_tag()
 def categories():
-    return views.categories_db
+    return CATS
 
 
 @register.inclusion_tag('categories.html')
 def inclusion_categories(selected: int = 0):
-    return {"categories": views.categories_db, "selected": selected}
+    return {"categories": CATS, "selected": selected}
