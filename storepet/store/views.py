@@ -1,36 +1,27 @@
 from django.http import HttpResponse, HttpResponseNotFound, HttpRequest
 from django.shortcuts import render, get_object_or_404
 
-from .models.women import Women
-
+from .models import Categories, Women, TagPosts
 
 menu = [
-    {'title': "О сайте", 'url_name': 'about'},
-    {'title': "Добавить статью", 'url_name': 'add_page'},
-    {'title': "Обратная связь", 'url_name': 'contact'},
-    {'title': "Войти", 'url_name': 'login'}
+    {"title": "О сайте", "url_name": "about"},
+    {"title": "Добавить статью", "url_name": "add_page"},
+    {"title": "Обратная связь", "url_name": "contact"},
+    {"title": "Войти", "url_name": "login"}
 ]
 
-categories_db = [
-    {"id": 1, "name": "Актрисы"},
-    {"id": 2, "name": "Певицы"},
-    {"id": 3, "name": "Спортсменки"},
-]
 
 def index(request: HttpRequest):
     posts = Women.objects.filter(is_published=1)
 
     data = {
-        'title': 'Главная страница',
-        'menu': menu,
-        'posts': posts,
-        'selected': 0
+        "title": "Главная страница",
+        "menu": menu,
+        "posts": posts,
+        "selected": 0
     }
-    return render(request, 'index.html', context=data)
 
-
-def about(request: HttpRequest):
-    return render(request, 'about.html', {'title': 'О сайте', 'menu': menu})
+    return render(request, template_name="index.html", context=data)
 
 
 def show_post(request: HttpRequest, post_slug: str):
@@ -43,30 +34,56 @@ def show_post(request: HttpRequest, post_slug: str):
         "selected": 1
     }
 
-    return render(request, "post.html", data)
+    return render(request, template_name="posts.html", context=data)
 
 
-def addpage(request: HttpRequest):
-    return HttpResponse("Добавление статьи")
+def show_categories(request: HttpRequest, category_slug: str):
+    category = get_object_or_404(Categories, slug=category_slug)
+    posts = Women.objects.filter(category_id=category.pk)
+
+    data = {
+        "title": f"Рубрика: {category.name}",
+        "menu": menu,
+        "posts": posts,
+        "selected": category.pk
+    }
+
+    return render(request, template_name="index.html", context=data)
+
+def show_tag_posts_list(request: HttpRequest, tag_slug: str):
+    tag = get_object_or_404(TagPosts, slug=tag_slug)
+    posts = tag.tags.filter(is_published=Women.Status.PUBLISHED)
+
+    data = {
+        "title": f"Тэг: {tag}",
+        "menu": menu,
+        "posts": posts,
+        "selected": None
+    }
+
+    return render(request, "index.html", context=data)
+
+def add_page(request: HttpRequest) -> HttpResponse:
+    data = {"title": "Добавить статью", "menu": menu}
+
+    return render(request, template_name="add_page.html", context=data)
 
 
-def contact(request: HttpRequest):
-    return HttpResponse("Обратная связь")
+def contact(request: HttpRequest) -> HttpResponse:
+    data = {"title": "Обратная связь", "menu": menu}
+
+    return render(request, template_name="contact.html", context=data)
 
 
-def login(request: HttpRequest):
+def login(request: HttpRequest) -> HttpResponse:
     return HttpResponse("Авторизация")
 
 
-def page_not_found(request: HttpRequest, exception):
+def about(request: HttpRequest):
+    data = {"title": "О сайте", "menu": menu}
+
+    return render(request, template_name="about.html", context=data)
+
+
+def page_not_found(request: HttpRequest, exception) -> HttpResponseNotFound:
     return HttpResponseNotFound("<h1>Страница не найдена</h1>")
-
-
-def show_categories(request: HttpRequest, category_id: int):
-    data = {
-        'title': 'Рубрика',
-        'menu': menu,
-        'posts': data_db,
-        'selected': category_id
-    }
-    return render(request, 'index.html', context=data)

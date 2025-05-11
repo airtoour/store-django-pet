@@ -1,7 +1,7 @@
-{% for category in categories %}
-    {% if category.id == selected %}
-        <li class="selected">{{ category.name }}</li>
+{% for cat in categories %}
+    {% if cat.id == selected %}
+        <li class="selected">{{ cat.name }}</li>
     {% else %}
-      <li><a href="{% url 'categories' category.id %}">{{ category.name }}</a></li>
+        <li><a href="{{ cat.get_absolute_url }}">{{ cat.name }}</a></li>
     {% endif %}
 {% endfor %}

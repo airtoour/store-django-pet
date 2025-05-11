@@ -1,5 +1,6 @@
 {% load static %}
 {% load tags %}
+
 <!DOCTYPE html>
 <html>
     <head>
@@ -30,7 +31,7 @@
                                     {% else %}
                                         <li class="last">
                                     {% endif %}
-                                        <a href="{% url m.url_name %}">{{ m.title }}</a>
+                                            <a href="{% url m.url_name %}">{{ m.title }}</a>
                                         </li>
                                 {% endfor %}
                             </ul>
@@ -44,16 +45,17 @@
                             <td valign="top" class="left-chapters">
 
                                 <ul id="leftchapters">
-                                    {% if selected == 0 or selected is None %}
+                                    {% if selected == 0 %}
                                         <li class="selected">Все категории</li>
                                     {% else %}
                                         <li><a href="{% url 'home' %}">Все категории</a></li>
                                     {% endif %}
 
-                                    {% inclusion_categories selected %}
+                                    {% show_categories selected %}
 
                                     <li class="share">
                                         <p>Наш канал</p>
+
                                         <a
                                             class="share-yt"
                                             href="https://www.youtube.com/channel/UClJzWfGWuGJL2t-3dYKcHTA/playlists"
@@ -61,6 +63,8 @@
                                             rel="nofollow">
                                         </a>
                                     </li>
+
+                                    <li>{% show_all_tags %}</li>
                                 </ul>
                             </td>
 
@@ -81,6 +85,7 @@
                     </table>
                 </td>
             </tr>
+
             <!-- Footer -->
             <tr>
                 <td valign=top>
