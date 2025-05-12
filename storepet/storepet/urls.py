@@ -17,11 +17,16 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 
-from store.views import index
+from store.views import page_not_found
 
 
 urlpatterns = [
+    path('__debug__', include("debug_toolbar.urls")),
     path('admin/', admin.site.urls),
     path('', include('store.urls')),
-
 ]
+
+handler404 = page_not_found
+
+admin.site.site_header = "Панель администрирования"
+admin.site.index_title = "Известные женщины мира"

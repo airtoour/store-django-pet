@@ -5,12 +5,15 @@ from django.urls import reverse
 class Categories(models.Model):
     """Модель таблицы Categories (Категории)"""
 
-    name = models.CharField(max_length=255, unique=True, db_index=True)
-    slug = models.SlugField(max_length=255, unique=True, db_index=True)
+    name = models.CharField(max_length=255, unique=True, db_index=True, verbose_name="Название")
+    slug = models.SlugField(max_length=255, unique=True, db_index=True, verbose_name="Слаг")
 
     objects = models.Manager()
 
     class Meta:
+        verbose_name = "Категория женщин"
+        verbose_name_plural = "Категории женщин"
+
         indexes = [
             models.Index(fields=("name",), name="idx_categories_unq_tag"),
             models.Index(fields=("slug",), name="idx_categories_unq_slug")

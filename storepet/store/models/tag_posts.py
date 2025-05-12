@@ -5,12 +5,15 @@ from django.urls import reverse
 class TagPosts(models.Model):
     """Модель таблицы TagPosts"""
 
-    tag = models.CharField(max_length=100, db_index=True)
-    slug = models.SlugField(max_length=255, unique=True, db_index=True)
+    tag = models.CharField(max_length=100, db_index=True, verbose_name="Тэг")
+    slug = models.SlugField(max_length=255, unique=True, db_index=True, verbose_name="Слаг")
 
     objects = models.Manager()
 
     class Meta:
+        verbose_name = "Тэг"
+        verbose_name_plural = "Тэги"
+
         ordering = ("tag",)
         indexes = [
             models.Index(fields=("tag",), name="idx_tag_posts_tag"),

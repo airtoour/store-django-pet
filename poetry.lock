@@ -58,14 +58,14 @@ files = [
 
 [[package]]
 name = "django"
-version = "4.2.1"
+version = "4.2.9"
 description = "A high-level Python web framework that encourages rapid development and clean, pragmatic design."
 optional = false
 python-versions = ">=3.8"
 groups = ["main"]
 files = [
-    {file = "Django-4.2.1-py3-none-any.whl", hash = "sha256:066b6debb5ac335458d2a713ed995570536c8b59a580005acb0732378d5eb1ee"},
-    {file = "Django-4.2.1.tar.gz", hash = "sha256:7efa6b1f781a6119a10ac94b4794ded90db8accbe7802281cd26f8664ffed59c"},
+    {file = "Django-4.2.9-py3-none-any.whl", hash = "sha256:2cc2fc7d1708ada170ddd6c99f35cc25db664f165d3794bc7723f46b2f8c8984"},
+    {file = "Django-4.2.9.tar.gz", hash = "sha256:12498cc3cb8bc8038539fef9e90e95f507502436c1f0c3a673411324fa675d14"},
 ]
 
 [package.dependencies]
@@ -76,6 +76,22 @@ tzdata = {version = "*", markers = "sys_platform == \"win32\""}
 [package.extras]
 argon2 = ["argon2-cffi (>=19.1.0)"]
 bcrypt = ["bcrypt"]
+
+[[package]]
+name = "django-debug-toolbar"
+version = "5.2.0"
+description = "A configurable set of panels that display various debug information about the current request/response."
+optional = false
+python-versions = ">=3.9"
+groups = ["main"]
+files = [
+    {file = "django_debug_toolbar-5.2.0-py3-none-any.whl", hash = "sha256:15627f4c2836a9099d795e271e38e8cf5204ccd79d5dbcd748f8a6c284dcd195"},
+    {file = "django_debug_toolbar-5.2.0.tar.gz", hash = "sha256:9e7f0145e1a1b7d78fcc3b53798686170a5b472d9cf085d88121ff823e900821"},
+]
+
+[package.dependencies]
+django = ">=4.2.9"
+sqlparse = ">=0.2"
 
 [[package]]
 name = "django-extensions"
@@ -379,4 +395,4 @@ files = [
 [metadata]
 lock-version = "2.1"
 python-versions = ">=3.13"
-content-hash = "23e6315dc432d63e36ef77668340f75b1e279c88a4f7460705147405c67213b6"
+content-hash = "a49ccf7bf188e8e081ac010e8f0c30c1b00e268326ff5a203a291789a3e79247"

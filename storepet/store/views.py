@@ -12,7 +12,7 @@ menu = [
 
 
 def index(request: HttpRequest):
-    posts = Women.objects.filter(is_published=1)
+    posts = Women.objects.filter(is_published=1).select_related("category")
 
     data = {
         "title": "Главная страница",
@@ -39,7 +39,7 @@ def show_post(request: HttpRequest, post_slug: str):
 
 def show_categories(request: HttpRequest, category_slug: str):
     category = get_object_or_404(Categories, slug=category_slug)
-    posts = Women.objects.filter(category_id=category.pk)
+    posts = Women.objects.filter(category_id=category.pk).select_related("category")
 
     data = {
         "title": f"Рубрика: {category.name}",
@@ -52,7 +52,11 @@ def show_categories(request: HttpRequest, category_slug: str):
 
 def show_tag_posts_list(request: HttpRequest, tag_slug: str):
     tag = get_object_or_404(TagPosts, slug=tag_slug)
-    posts = tag.tags.filter(is_published=Women.Status.PUBLISHED)
+    posts = (
+        tag.tags
+        .filter(is_published=Women.Status.PUBLISHED)
+        .select_related("category")
+    )
 
     data = {
         "title": f"Тэг: {tag}",
