@@ -1,5 +1,4 @@
 from django.db import models
-from django.template.defaultfilters import slugify
 from django.urls import reverse
 
 from .husbands import Husbands
@@ -21,10 +20,12 @@ class Women(models.Model):
     is_published = models.BooleanField(
         choices=tuple(map(lambda x: (bool(x[0]), x[1]), Status.choices)),
         default=Status.DRAFT,
-        verbose_name="Статус публикации"
+        verbose_name="Статус"
     )
 
     slug = models.SlugField(max_length=255, unique=True, db_index=True, verbose_name="Слаг")
+
+    photo = models.ImageField(upload_to="photos/%Y/%m/%d/", default=None, blank=True, null=True, verbose_name="Фото")
 
     # Cвязи
     category = models.ForeignKey(Categories, on_delete=models.PROTECT, related_name="posts", verbose_name="Категории")
@@ -37,6 +38,9 @@ class Women(models.Model):
         related_name="wife",
         verbose_name="Муж"
     )
+
+    # todo кул практика вместо обычного поля
+    # photos = models.ForeignKey(Files, on_delete=models.PROTECT, related_name="files", verbose_name="Фото")
 
     class Meta:
         verbose_name = "Известная женщина"
@@ -56,7 +60,3 @@ class Women(models.Model):
 
     def get_absolute_url(self):
         return reverse(viewname="posts", kwargs={"post_slug": self.slug})
-
-    # def save(self, *args, **kwargs):
-    #     self.slug = slugify(self.title)
-    #     super().save(*args, **kwargs)

@@ -1,13 +1,28 @@
 from django.http import HttpResponse, HttpResponseNotFound, HttpRequest
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import render, get_object_or_404, redirect
 
-from .models import Categories, Women, TagPosts
+from .forms import AddWomenModelForm, UploadFilesForm
+from .models import Categories, Women, TagPosts, Files
+from .services.files import handle_upload_file
+
 
 menu = [
-    {"title": "О сайте", "url_name": "about"},
-    {"title": "Добавить статью", "url_name": "add_page"},
-    {"title": "Обратная связь", "url_name": "contact"},
-    {"title": "Войти", "url_name": "login"}
+    {
+        "title": "О сайте",
+        "url_name": "about"
+    },
+    {
+        "title": "Добавить статью",
+        "url_name": "add_page"
+    },
+    {
+        "title": "Обратная связь",
+        "url_name": "contact"
+    },
+    {
+        "title": "Войти",
+        "url_name": "login"
+    }
 ]
 
 
@@ -65,10 +80,28 @@ def show_tag_posts_list(request: HttpRequest, tag_slug: str):
         "selected": None
     }
 
-    return render(request, "index.html", context=data)
+    return render(request, template_name="index.html", context=data)
+
 
 def add_page(request: HttpRequest) -> HttpResponse:
-    data = {"title": "Добавить статью", "menu": menu}
+    if request.method == "POST":
+        form = AddWomenModelForm(request.POST, request.FILES)
+
+        if form.is_valid():
+            try:
+                form.save()
+                return redirect("home")
+            except Exception as e:
+                form.add_error(None, "Ошибка добавления поста")
+                print(e)
+    else:
+        form = AddWomenModelForm()
+
+    data = {
+        "title": "Добавить статью",
+        "menu": menu,
+        "form": form
+    }
 
     return render(request, template_name="add_page.html", context=data)
 
@@ -84,7 +117,16 @@ def login(request: HttpRequest) -> HttpResponse:
 
 
 def about(request: HttpRequest):
-    data = {"title": "О сайте", "menu": menu}
+    if request.method == "POST":
+        form = UploadFilesForm(request.POST, request.FILES)
+
+        if form.is_valid():
+            uploaded_file = Files(file=request.FILES["file"])
+            uploaded_file.save()
+    else:
+        form = UploadFilesForm()
+
+    data = {"title": "О сайте", "menu": menu, "form": form}
 
     return render(request, template_name="about.html", context=data)
 

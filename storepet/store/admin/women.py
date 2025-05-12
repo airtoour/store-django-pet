@@ -1,6 +1,7 @@
 from django.contrib import admin, messages
 from django.db.models import QuerySet
 from django.http import HttpRequest
+from django.utils.safestring import mark_safe
 
 from ..models import Women
 
@@ -26,8 +27,9 @@ class WomenAdmin(admin.ModelAdmin):
     exclude = ("is_published",)
     prepopulated_fields = {"slug": ("title",)}
     filter_horizontal = ("tags",)
+    readonly_fields = ("post_photo",)
 
-    list_display = ("title", "time_created", "is_published", "category", "brief_info")
+    list_display = ("title", "post_photo", "time_created", "is_published", "category")
     list_display_links = ("title",)
     list_editable = ("is_published",)
     list_filter = (MarriedFilter, "category__name", "is_published")
@@ -39,11 +41,12 @@ class WomenAdmin(admin.ModelAdmin):
     actions = ("set_published", "set_draft")
 
     search_fields = ("title", "category__name")
+    save_on_top = True
 
-    @admin.display(description="Краткое описание", ordering="content")
-    def brief_info(self, women: Women) -> str:
+    @admin.display(description="Фото", ordering="content")
+    def post_photo(self, women: Women) -> str:
         """Метод, добавляющий поле в панель"""
-        return f"Описание {len(women.content)} символов"
+        return mark_safe(f"<img src '{women.photo.url}' width=50>") if women.photo else "Без фото"
 
     @admin.action(description="Опубликовать записи")
     def set_published(self, request: HttpRequest, queryset: QuerySet) -> None:
