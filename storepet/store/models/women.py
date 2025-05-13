@@ -6,6 +6,12 @@ from .tag_posts import TagPosts
 from .categories import Categories
 
 
+class PublishedManager(models.Manager):
+    """Менеджер фильтрации опубликованных статей"""
+    def get_queryset(self):
+        return super().get_queryset().filter(is_published=Women.Status.PUBLISHED)
+
+
 class Women(models.Model):
     """Модель таблицы Women"""
 
@@ -54,6 +60,7 @@ class Women(models.Model):
         ]
 
     objects = models.Manager()
+    published = PublishedManager()
 
     def __str__(self):
         return self.title

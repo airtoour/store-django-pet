@@ -43,10 +43,10 @@ class WomenAdmin(admin.ModelAdmin):
     search_fields = ("title", "category__name")
     save_on_top = True
 
-    @admin.display(description="Фото", ordering="content")
+    @admin.display(description="Имеющееся Фото", ordering="content")
     def post_photo(self, women: Women) -> str:
         """Метод, добавляющий поле в панель"""
-        return mark_safe(f"<img src '{women.photo.url}' width=50>") if women.photo else "Без фото"
+        return mark_safe(f"<img src='{women.photo.url}' width=50>") if women.photo else "Без фото"
 
     @admin.action(description="Опубликовать записи")
     def set_published(self, request: HttpRequest, queryset: QuerySet) -> None:

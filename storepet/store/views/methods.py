@@ -1,9 +1,8 @@
 from django.http import HttpResponse, HttpResponseNotFound, HttpRequest
 from django.shortcuts import render, get_object_or_404, redirect
 
-from .forms import AddWomenModelForm, UploadFilesForm
-from .models import Categories, Women, TagPosts, Files
-from .services.files import handle_upload_file
+from ..forms import AddWomenModelForm, UploadFilesForm
+from ..models import Categories, Women, TagPosts, Files
 
 
 menu = [
@@ -27,7 +26,7 @@ menu = [
 
 
 def index(request: HttpRequest):
-    posts = Women.objects.filter(is_published=1).select_related("category")
+    posts = Women.published.select_related("category")
 
     data = {
         "title": "Главная страница",
@@ -67,11 +66,7 @@ def show_categories(request: HttpRequest, category_slug: str):
 
 def show_tag_posts_list(request: HttpRequest, tag_slug: str):
     tag = get_object_or_404(TagPosts, slug=tag_slug)
-    posts = (
-        tag.tags
-        .filter(is_published=Women.Status.PUBLISHED)
-        .select_related("category")
-    )
+    posts = tag.tags.published.select_related("category")
 
     data = {
         "title": f"Тэг: {tag}",
@@ -81,29 +76,6 @@ def show_tag_posts_list(request: HttpRequest, tag_slug: str):
     }
 
     return render(request, template_name="index.html", context=data)
-
-
-def add_page(request: HttpRequest) -> HttpResponse:
-    if request.method == "POST":
-        form = AddWomenModelForm(request.POST, request.FILES)
-
-        if form.is_valid():
-            try:
-                form.save()
-                return redirect("home")
-            except Exception as e:
-                form.add_error(None, "Ошибка добавления поста")
-                print(e)
-    else:
-        form = AddWomenModelForm()
-
-    data = {
-        "title": "Добавить статью",
-        "menu": menu,
-        "form": form
-    }
-
-    return render(request, template_name="add_page.html", context=data)
 
 
 def contact(request: HttpRequest) -> HttpResponse:
