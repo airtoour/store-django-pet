@@ -1,3 +1,4 @@
+from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator
 from django.http import HttpResponse, HttpResponseNotFound, HttpRequest
 from django.shortcuts import render, get_object_or_404, redirect
@@ -89,6 +90,7 @@ def login(request: HttpRequest) -> HttpResponse:
     return HttpResponse("Авторизация")
 
 
+@login_required
 def about(request: HttpRequest):
     contact_list = Women.published.all()
     paginator = Paginator(contact_list, 3)

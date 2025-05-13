@@ -1,5 +1,4 @@
-from typing import List, Dict
-
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import HttpRequest, HttpResponse
 from django.shortcuts import redirect, render
 from django.urls import reverse_lazy
@@ -9,34 +8,7 @@ from django.views.generic import FormView, CreateView, UpdateView, DeleteView
 from ..forms import AddWomenModelForm
 from ..models import Women
 from ..utils.mixins import DataMixin
-
-MENU: List[Dict[str, str]] = [
-    {
-        "title": "О сайте",
-        "url_name": "about"
-    },
-    {
-        "title": "Добавить статью",
-        "url_name": "add_page"
-    },
-    # todo Сделать возможность выбирать кого удалять, кого редактировать
-    # {
-    #     "title": "Редактировать статью (devs)",
-    #     "url_name": "edit_page"
-    # },
-    # {
-    #     "title": "Удалить статью (devs)",
-    #     "url_name": "delete_page"
-    # },
-    {
-        "title": "Обратная связь",
-        "url_name": "contact"
-    },
-    {
-        "title": "Войти",
-        "url_name": "login"
-    }
-]
+from ..utils.base_mappings import MENU
 
 
 def add_page(request: HttpRequest) -> HttpResponse:
@@ -121,7 +93,7 @@ class PagesAddFormView(FormView):
         return super().form_valid(form)
 
 
-class PagesCreateView(DataMixin, CreateView):
+class PagesCreateView(LoginRequiredMixin, DataMixin, CreateView):
     """
     Модель представления добавления
     новой статьи через класс CreateView
@@ -131,6 +103,12 @@ class PagesCreateView(DataMixin, CreateView):
     template_name = "add_page.html"
 
     title_page = "Добавление статьи"
+
+    def form_valid(self, form):
+        post = form.save(commit=False)
+        post.author = self.request.user
+
+        return super().form_valid(form)
 
 
 class PagesUpdateView(DataMixin, UpdateView):

@@ -21,10 +21,12 @@ from django.urls import path, include
 from store.views import page_not_found
 from storepet import settings
 
+
 urlpatterns = [
     path('__debug__', include("debug_toolbar.urls")),
     path('admin/', admin.site.urls),
     path('', include('store.urls')),
+    path('users/', include('users.urls', namespace="users")),
 ]
 
 if settings.DEBUG:

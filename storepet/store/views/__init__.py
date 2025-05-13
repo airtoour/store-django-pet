@@ -22,6 +22,5 @@ from .models import (
     WomenHomeView,
     CategoriesView,
     ShowPostView,
-    TagsPostsListView,
-
+    TagsPostsListView
 )

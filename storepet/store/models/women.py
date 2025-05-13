@@ -1,3 +1,4 @@
+from django.contrib.auth import get_user_model
 from django.db import models
 from django.urls import reverse
 
@@ -32,6 +33,7 @@ class Women(models.Model):
     slug = models.SlugField(max_length=255, unique=True, db_index=True, verbose_name="Слаг")
 
     photo = models.ImageField(upload_to="photos/%Y/%m/%d/", default=None, blank=True, null=True, verbose_name="Фото")
+    author = models.ForeignKey(get_user_model(), on_delete=models.SET_NULL, related_name="posts", null=True, default=None)
 
     # Cвязи
     category = models.ForeignKey(Categories, on_delete=models.PROTECT, related_name="posts", verbose_name="Категории")
