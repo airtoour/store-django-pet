@@ -1,3 +1,4 @@
+from django.core.paginator import Paginator
 from django.http import HttpResponse, HttpResponseNotFound, HttpRequest
 from django.shortcuts import render, get_object_or_404, redirect
 
@@ -89,18 +90,13 @@ def login(request: HttpRequest) -> HttpResponse:
 
 
 def about(request: HttpRequest):
-    if request.method == "POST":
-        form = UploadFilesForm(request.POST, request.FILES)
+    contact_list = Women.published.all()
+    paginator = Paginator(contact_list, 3)
 
-        if form.is_valid():
-            uploaded_file = Files(file=request.FILES["file"])
-            uploaded_file.save()
-    else:
-        form = UploadFilesForm()
+    page_number = request.GET.get("page")
+    page_obj = paginator.get_page(page_number)
 
-    data = {"title": "О сайте", "menu": menu, "form": form}
-
-    return render(request, template_name="about.html", context=data)
+    return render(request, template_name="about.html", context={"title": "О сайте", "page_obj": page_obj})
 
 
 def page_not_found(request: HttpRequest, exception) -> HttpResponseNotFound:

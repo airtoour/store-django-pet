@@ -37,7 +37,6 @@ class WomenHomeView(DataMixin, ListView):
     title_page = "Главная страница"
     selected = 0
 
-
     def get_queryset(self):
         """Получаем список женщин из БД"""
         return Women.published.select_related("category")

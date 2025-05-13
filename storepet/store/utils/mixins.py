@@ -22,6 +22,8 @@ MENU: List[Dict[str, str]] = [
 
 
 class DataMixin:
+    paginate_by = 3
+
     title_page = None
     selected = None
     extra_context = {}
