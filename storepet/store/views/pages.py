@@ -1,4 +1,4 @@
-from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
 from django.http import HttpRequest, HttpResponse
 from django.shortcuts import redirect, render
 from django.urls import reverse_lazy
@@ -93,7 +93,7 @@ class PagesAddFormView(FormView):
         return super().form_valid(form)
 
 
-class PagesCreateView(LoginRequiredMixin, DataMixin, CreateView):
+class PagesCreateView(PermissionRequiredMixin, LoginRequiredMixin, DataMixin, CreateView):
     """
     Модель представления добавления
     новой статьи через класс CreateView
@@ -104,6 +104,8 @@ class PagesCreateView(LoginRequiredMixin, DataMixin, CreateView):
 
     title_page = "Добавление статьи"
 
+    permission_required = "store.add_women"
+
     def form_valid(self, form):
         post = form.save(commit=False)
         post.author = self.request.user
@@ -111,7 +113,7 @@ class PagesCreateView(LoginRequiredMixin, DataMixin, CreateView):
         return super().form_valid(form)
 
 
-class PagesUpdateView(DataMixin, UpdateView):
+class PagesUpdateView(PermissionRequiredMixin, LoginRequiredMixin, DataMixin, UpdateView):
     """
     Модель представления обновления
     новой статьи через класс CreateView
@@ -124,9 +126,10 @@ class PagesUpdateView(DataMixin, UpdateView):
 
     title_page = "Редактирование статьи"
 
+    permission_required = "store.change_women"
 
 
-class PagesDeleteView(DataMixin, DeleteView):
+class PagesDeleteView(PermissionRequiredMixin, LoginRequiredMixin, DataMixin, DeleteView):
     """
     Модель представления удаления
     новой статьи через класс CreateView
